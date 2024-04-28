@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Damaty Games</title>
+    
+</head>
+<body>
+    <header>
+        <nav>
+            <img src="https://i.imgur.com/I1TFu8I.gif" alt="Logo" class="logo" >
+            <ul>
+                <li><a href="Untitled-1.html">Acceuil</a></li>
+                <li><a href="découvire.html">Découvrir</a></li>
+                <li><a href="#">Actus</a></li>
+                <li><a href="streaming.html">Streaming</a></li> <!-- Ajout de la catégorie "Streaming" -->
+                <li><a href="jeux.html">Jeux</a></li> <!-- Ajout de la catégorie "Jeux" -->
+            </ul>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Rechercher dans la boutique...">
+                <button class="search-button">Rechercher</button>
+            </div>
+        </nav>
+    </header>
+    <section class="hero">
+        <h1>Des offres exclusives chez Damaty</h1>
+        <p>Découvrez nos produits exceptionnels</p>
+        <a href="#" class="cta-button">Voir les offres</a>
+    </section>
+    <section class="content">
+        <h2>Nos produits en vedette</h2>
+        <!-- Ajoutez ici les produits en vedette -->
+        <div class="product-images">
+            <a href="gtav.html"><img src="https://th.bing.com/th/id/OIP.16YOiw338R-FBsSPJusV9gHaEK?rs=1&pid=ImgDetMain" alt="Image 1"></a>
+            <a href="gtaiv.html"><img src="https://vignette.wikia.nocookie.net/es.gta/images/d/de/Grand_Theft_Auto_IV.JPG/revision/latest?cb=20080911024224" alt="Image 2"></a>
+            <a href="blackops3.html"><img src="https://th.bing.com/th/id/OIP.eXJhOh3J5VxDHwd8ZSRhYQHaEK?rs=1&pid=ImgDetMain" alt="Image 3"></a>
+        </div>
+    </section>
+    <footer>
+        <p>&copy; 2024 Damaty. Tous droits réservés.</p>
+    </footer>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        header {
+            background-color: #222;
+            padding: 10px 20px; /* Réduction du rembourrage de la barre de navigation */
+            color: #fff;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid #555;
+            top: 0;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between; /* Pour aligner les éléments de navigation à gauche et à droite */
+            align-items: center; /* Pour aligner les éléments verticalement */
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .search-container {
+            text-align: center;
+        }
+
+        .search-input {
+            padding: 10px;
+            width: 200px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            background-color: #555;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background-color: #333;
+        }
+
+        .hero {
+            margin-top: 80px;
+            background-image: url('https://cdn-images-1.medium.com/v2/resize:fit:1200/1*bD9nGMBuGWBdawdmrMmzVA.png');
+            background-size: cover;
+            color: #fff;
+            text-align: center;
+            padding: 100px 20px;
+            border-bottom: 1px solid #555;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .cta-button {
+            background-color: #ff9900;
+            color: #fff;
+            padding: 15px 30px;
+            text-decoration: none;
+            font-size: 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #e68a00;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .product-images {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .product-images img {
+            width: 150px;
+            margin: 10px;
+        }
+
+        footer {
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .logo {
+            width: 100px;
+            height: auto;
+        }
+
+        @media screen and (max-width: 768px) {
+            nav ul {
+                position: absolute;
+                top: 50px;
+                left: 0;
+                background-color: #222;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+            }
+
+            nav ul.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            nav ul li {
+                display: block;
+                margin: 10px 0;
+            }
+
+            .search-container {
+                margin-top: 20px;
+            }
+
+            .hero {
+                margin-top: 60px;
+            }
+
+            .logo {
+                position: relative;
+                margin-bottom: 20px;
+            }
+        }
+
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navToggle = document.querySelector('.logo');
+            const navMenu = document.querySelector('nav ul');
+
+            navToggle.addEventListener('click', function () {
+                navMenu.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
