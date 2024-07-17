@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTA V RP Server Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        #serverForm {
+            margin-bottom: 20px;
+        }
+
+        #serverForm input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+            width: 200px;
+        }
+
+        #serverForm button {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        #serverForm button:hover {
+            background-color: #45a049;
+        }
+
+        .server {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .server h3 {
+            margin-top: 0;
+        }
+
+        .server p {
+            margin: 5px 0;
+        }
+
+        .server button {
+            margin-right: 5px;
+            padding: 6px 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .file-operations {
+            margin-top: 20px;
+        }
+
+        .file-operations input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        .file-operations button {
+            margin-top: 10px;
+            background-color: #008CBA;
+        }
+
+        .file-operations button:hover {
+            background-color: #005580;
+        }
+
+        .cmd-operations {
+            margin-top: 20px;
+        }
+
+        .cmd-operations input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+            width: 400px;
+        }
+
+        .cmd-operations button {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .cmd-operations button:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>GTA V RP Server Manager</h1>
+    </header>
+    
+    <main>
+        <div id="serverForm">
+            <input type="text" id="serverName" placeholder="Server Name">
+            <button id="createServerBtn">Create Server</button>
+        </div>
+
+        <div id="serverList"></div>
+
+        <div class="file-operations">
+            <h2>File Operations</h2>
+            <input type="file" id="fileInput">
+            <button id="uploadFileBtn">Upload File</button>
+        </div>
+
+        <div class="cmd-operations">
+            <h2>Command Execution</h2>
+            <input type="text" id="commandInput" placeholder="Enter command">
+            <button id="executeCmdBtn">Execute Command</button>
+        </div>
+    </main>
+
+    <script>
+        let servers = [];
+
+        function createServer() {
+            const serverName = document.getElementById('serverName').value.trim();
+            if (!serverName) {
+                alert('Please enter a server name.');
+                return;
+            }
+
+            const server = {
+                id: Date.now(),
+                name: serverName,
+                status: 'Stopped'
+            };
+            servers.push(server);
+            displayServer(server);
+            document.getElementById('serverName').value = ''; // Clear input
+        }
+
+        function startServer(id) {
+            const server = servers.find(s => s.id === id);
+            if (server) {
+                server.status = 'Running';
+                updateServer(server);
+                executeCMD(`start fivem.exe +exec server.cfg +set onesync_enabled 1 +sv_licenseKey changeme +set onesync_forceMigration true +set txAdminPort 40120 +set server_log_level 0 +set rcon_password changeme +set sv_enforceGameBuild 2189`);
+            }
+        }
+
+        function stopServer(id) {
+            const server = servers.find(s => s.id === id);
+            if (server) {
+                server.status = 'Stopped';
+                updateServer(server);
+                executeCMD(`taskkill /f /im fivem.exe`);
+            }
+        }
+
+        function displayServer(server) {
+            const serverList = document.getElementById('serverList');
+            const serverDiv = document.createElement('div');
+            serverDiv.classList.add('server');
+            serverDiv.id = `server-${server.id}`;
+            serverDiv.innerHTML = `
+                <h3>${server.name}</h3>
+                <p>Status: ${server.status}</p>
+                <button onclick="startServer(${server.id})">Start</button>
+                <button onclick="stopServer(${server.id})">Stop</button>
+            `;
+            serverList.appendChild(serverDiv);
+        }
+
+        function updateServer(server) {
+            const serverDiv = document.getElementById(`server-${server.id}`);
+            if (serverDiv) {
+                serverDiv.innerHTML = `
+                    <h3>${server.name}</h3>
+                    <p>Status: ${server.status}</p>
+                    <button onclick="startServer(${server.id})">Start</button>
+                    <button onclick="stopServer(${server.id})">Stop</button>
+                `;
+            }
+        }
+
+        // Fonction pour exécuter une commande CMD via Node.js
+        function executeCMD(command) {
+            fetch('/execute-cmd', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ command }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Command executed:', data);
+                alert('Command executed successfully.');
+            })
+            .catch(error => {
+                console.error('Error executing command:', error);
+                alert('Error executing command. Please try again.');
+            });
+        }
+
+        document.getElementById('createServerBtn').addEventListener('click', createServer);
+
+        // Opérations de fichiers
+        document.getElementById('uploadFileBtn').addEventListener('click', uploadFile);
+
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload-file', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('File uploaded:', data);
+                alert('File uploaded successfully.');
+                fileInput.value = ''; // Clear file input
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+                alert('Error uploading file. Please try again.');
+            });
+        }
+
+        // Exécution de commandes
+        document.getElementById('executeCmdBtn').addEventListener('click', executeCommand);
+
+        function executeCommand() {
+            const commandInput = document.getElementById('commandInput').value.trim();
+            if (!commandInput) {
+                alert('Please enter a command.');
+                return;
+            }
+
+            fetch('/execute-cmd', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ command: commandInput }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Command executed:', data);
+                alert('Command executed successfully.');
+                document.getElementById('commandInput').value = ''; // Clear command input
+            })
+            .catch(error => {
+                console.error('Error executing command:', error);
+                alert('Error executing command. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>
