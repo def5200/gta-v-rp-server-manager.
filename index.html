@@ -5,117 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GTA V RP Server Manager</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        main {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        #serverForm {
-            margin-bottom: 20px;
-        }
-
-        #serverForm input[type="text"] {
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: 10px;
-            width: 200px;
-        }
-
-        #serverForm button {
-            padding: 8px 16px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        #serverForm button:hover {
-            background-color: #45a049;
-        }
-
-        .server {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .server h3 {
-            margin-top: 0;
-        }
-
-        .server p {
-            margin: 5px 0;
-        }
-
-        .server button {
-            margin-right: 5px;
-            padding: 6px 12px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .file-operations {
-            margin-top: 20px;
-        }
-
-        .file-operations input[type="file"] {
-            margin-bottom: 10px;
-        }
-
-        .file-operations button {
-            margin-top: 10px;
-            background-color: #008CBA;
-        }
-
-        .file-operations button:hover {
-            background-color: #005580;
-        }
-
-        .cmd-operations {
-            margin-top: 20px;
-        }
-
-        .cmd-operations input[type="text"] {
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: 10px;
-            width: 400px;
-        }
-
-        .cmd-operations button {
-            padding: 8px 16px;
-            font-size: 16px;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .cmd-operations button:hover {
-            background-color: #cc0000;
-        }
+        /* Styles ici */
     </style>
 </head>
 <body>
@@ -169,7 +59,21 @@
             if (server) {
                 server.status = 'Running';
                 updateServer(server);
-                executeCMD(`start fivem.exe +exec server.cfg +set onesync_enabled 1 +sv_licenseKey changeme +set onesync_forceMigration true +set txAdminPort 40120 +set server_log_level 0 +set rcon_password changeme +set sv_enforceGameBuild 2189`);
+                fetch('/start-server', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ serverId: id }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Server started:', data);
+                })
+                .catch(error => {
+                    console.error('Error starting server:', error);
+                    alert('Error starting server. Please try again.');
+                });
             }
         }
 
@@ -178,7 +82,21 @@
             if (server) {
                 server.status = 'Stopped';
                 updateServer(server);
-                executeCMD(`taskkill /f /im fivem.exe`);
+                fetch('/stop-server', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ serverId: id }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Server stopped:', data);
+                })
+                .catch(error => {
+                    console.error('Error stopping server:', error);
+                    alert('Error stopping server. Please try again.');
+                });
             }
         }
 
@@ -208,29 +126,7 @@
             }
         }
 
-        // Fonction pour exécuter une commande CMD via Node.js
-        function executeCMD(command) {
-            fetch('/execute-cmd', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ command }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Command executed:', data);
-                alert('Command executed successfully.');
-            })
-            .catch(error => {
-                console.error('Error executing command:', error);
-                alert('Error executing command. Please try again.');
-            });
-        }
-
         document.getElementById('createServerBtn').addEventListener('click', createServer);
-
-        // Opérations de fichiers
         document.getElementById('uploadFileBtn').addEventListener('click', uploadFile);
 
         function uploadFile() {
@@ -260,7 +156,6 @@
             });
         }
 
-        // Exécution de commandes
         document.getElementById('executeCmdBtn').addEventListener('click', executeCommand);
 
         function executeCommand() {
